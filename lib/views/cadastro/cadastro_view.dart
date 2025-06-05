@@ -5,9 +5,14 @@ import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
 
-class CadastroView extends StatelessWidget {
+class CadastroView extends StatefulWidget {
   const CadastroView({super.key});
 
+  @override
+  State<CadastroView> createState() => _CadastroViewState();
+}
+
+class _CadastroViewState extends State<CadastroView> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController identificacaoFuncionalController =
