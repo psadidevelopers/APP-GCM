@@ -8,9 +8,7 @@ import '../../../utils/estilos.dart';
 import '../../../utils/utils.dart';
 
 class SplashScreen extends StatefulWidget {
-  final VoidCallback onInitializationComplete;
-
-  const SplashScreen({super.key, required this.onInitializationComplete});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -31,19 +29,18 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 200),
     )..repeat();
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.8).animate(_controller);
     _fadeAnimation = Tween<double>(begin: 1.0, end: 0.4).animate(_controller);
 
-    // Simulate loading process
-    timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
       setState(() {
         progress += 0.01;
         if (progress >= 1.0) {
           timer.cancel();
-          widget.onInitializationComplete();
+          context.go('/', extra: 'fromSplash');
         }
       });
     });
@@ -136,7 +133,6 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                     Center(
                       child: Text(
-                        // ((progress * 100) - 2).toStringAsFixed(0),
                         ((progress * 100)).toStringAsFixed(0),
                         textAlign: TextAlign.center,
                         style: Utils.safeGoogleFont(
@@ -149,48 +145,10 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                   ],
-                ), // ProgressBar aqui
+                ),
               ],
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Visibility(
-        visible: false, // Definir como false para tornar o botão invisível
-        child: Container(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          width: double.infinity,
-          child: TextButton(
-            onPressed: () {
-              context.go("/");
-            },
-            style: TextButton.styleFrom(padding: EdgeInsets.zero),
-            child: Container(
-              width: double.infinity,
-              height: 52,
-              decoration: BoxDecoration(
-                border: Border.all(color: Estilos.cinzaClaro),
-                color: Estilos.preto,
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: Center(
-                child: Center(
-                  child: Text(
-                    'Acessar',
-                    textAlign: TextAlign.center,
-                    style: Utils.safeGoogleFont(
-                      'Roboto',
-                      fontSize: 22 * ffem,
-                      fontWeight: FontWeight.w900,
-                      height: 1.1725,
-                      letterSpacing: 0.55,
-                      color: Estilos.branco,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );

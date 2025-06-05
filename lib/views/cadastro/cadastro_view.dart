@@ -1,9 +1,17 @@
+import 'package:app_gcm_sa/components/snackbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
+
+class Disponibilidade {
+  final String data;
+  final String evento;
+
+  Disponibilidade({required this.data, this.evento = ''});
+}
 
 class CadastroView extends StatefulWidget {
   const CadastroView({super.key});
@@ -14,6 +22,7 @@ class CadastroView extends StatefulWidget {
 
 class _CadastroViewState extends State<CadastroView> {
   final _formKey = GlobalKey<FormState>();
+  final List<Disponibilidade> _disponibilidades = [];
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +261,35 @@ class _CadastroViewState extends State<CadastroView> {
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            final novaData =
+                                disponibilidadeController.text.trim();
+
+                            if (novaData.isEmpty) return;
+
+                            if (novaData.length != 10) return;
+
+                            final existe = _disponibilidades.any(
+                              (d) => d.data == novaData,
+                            );
+
+                            if (existe) {
+                              showCustomSnackbar(
+                                context,
+                                message: 'Data já inserida.',
+                                backgroundColor: Estilos.danger,
+                                textColor: Estilos.textDanger,
+                              );
+                              return;
+                            }
+
+                            setState(() {
+                              _disponibilidades.add(
+                                Disponibilidade(data: novaData),
+                              );
+                              disponibilidadeController.clear();
+                            });
+                          },
                           child: const Icon(Icons.add),
                         ),
                       ],
@@ -311,36 +348,52 @@ class _CadastroViewState extends State<CadastroView> {
                               ),
                             ),
                           ],
-                          rows: [
-                            DataRow(
-                              cells: [
-                                DataCell(
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Estilos.vermelho,
+                          rows:
+                              _disponibilidades.map((dispo) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Estilos.vermelho,
+                                          ),
+                                          onPressed: () {
+                                            if (dispo.evento.isNotEmpty) {
+                                              showCustomSnackbar(
+                                                context,
+                                                message:
+                                                    'Evento já cadastrado nesta data.',
+                                                backgroundColor:
+                                                    Estilos.warning,
+                                                textColor: Estilos.textWarning,
+                                              );
+                                            } else {
+                                              setState(() {
+                                                _disponibilidades.remove(dispo);
+                                              });
+                                            }
+                                          },
+                                        ),
                                       ),
-                                      onPressed: () {},
                                     ),
-                                  ),
-                                ),
-                                const DataCell(
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('02/05/2025'),
-                                  ),
-                                ),
-                                const DataCell(
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('asdasd'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                    DataCell(
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(dispo.data),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(dispo.evento),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
                         ),
                       ),
                     ),
