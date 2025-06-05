@@ -62,8 +62,16 @@ class CadastroView extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
                       labelText: 'Identificação Funcional',
-                      border: OutlineInputBorder(),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -72,7 +80,15 @@ class CadastroView extends StatelessWidget {
                     controller: nomeCompletoController,
                     decoration: const InputDecoration(
                       labelText: 'Nome Completo',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -81,7 +97,15 @@ class CadastroView extends StatelessWidget {
                     controller: nomeGuerraController,
                     decoration: const InputDecoration(
                       labelText: 'Nome de Guerra',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -90,7 +114,15 @@ class CadastroView extends StatelessWidget {
                     controller: graduacaoController,
                     decoration: const InputDecoration(
                       labelText: 'Graduação',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -99,7 +131,15 @@ class CadastroView extends StatelessWidget {
                     controller: categoriaCnhController,
                     decoration: const InputDecoration(
                       labelText: 'Categoria CNH',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -109,7 +149,15 @@ class CadastroView extends StatelessWidget {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'E-mail',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -118,7 +166,15 @@ class CadastroView extends StatelessWidget {
                     controller: turnoTrabalhoController,
                     decoration: const InputDecoration(
                       labelText: 'Turno atual de trabalho',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -132,7 +188,15 @@ class CadastroView extends StatelessWidget {
                     ],
                     decoration: const InputDecoration(
                       labelText: 'Telefone Celular',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Estilos.cinzaClaro),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: Utils.safeGoogleFont(
+                      'Roboto',
+                      fontWeight: FontWeight.w400,
+                      color: Estilos.preto,
                     ),
                   ),
 
@@ -161,14 +225,24 @@ class CadastroView extends StatelessWidget {
                           ],
                           decoration: const InputDecoration(
                             labelText: 'Data de disponibilidade',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Estilos.cinzaClaro),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          ),
+                          style: Utils.safeGoogleFont(
+                            'Roboto',
+                            fontWeight: FontWeight.w400,
+                            color: Estilos.preto,
                           ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
                         onPressed: () {},
-                        child: const Text('Incluir'),
+                        child: const Icon(Icons.add),
                       ),
                     ],
                   ),
@@ -180,24 +254,43 @@ class CadastroView extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
-                        columnSpacing: 16,
+                        columnSpacing: 24,
+                        horizontalMargin: 16,
                         columns: const [
                           DataColumn(
                             label: SizedBox(
-                              width: 80,
-                              child: Text('Ações'),
+                              width: 60,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Ações',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: SizedBox(
                               width: 150,
-                              child: Text('Data Disponibilidade'),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Data Disponibilidade',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: SizedBox(
-                              width: 100,
-                              child: Text('Evento'),
+                              width: 120,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Evento',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -205,72 +298,28 @@ class CadastroView extends StatelessWidget {
                           DataRow(
                             cells: [
                               DataCell(
-                                SizedBox(
-                                  width: 80,
-                                  child: TextButton(
-                                    child: const Text(
-                                      'Excluir',
-                                      style: TextStyle(color: Colors.red),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Estilos.vermelho,
                                     ),
                                     onPressed: () {},
                                   ),
                                 ),
                               ),
                               const DataCell(
-                                SizedBox(
-                                  width: 150,
+                                Align(
+                                  alignment: Alignment.centerLeft,
                                   child: Text('02/05/2025'),
                                 ),
                               ),
                               const DataCell(
-                                SizedBox(
-                                  width: 100,
+                                Align(
+                                  alignment: Alignment.centerLeft,
                                   child: Text('asdasd'),
                                 ),
-                              ),
-                            ],
-                          ),
-                          DataRow(
-                            cells: [
-                              DataCell(
-                                SizedBox(
-                                  width: 80,
-                                  child: TextButton(
-                                    child: const Text(
-                                      'Excluir',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                              ),
-                              const DataCell(
-                                SizedBox(width: 150, child: Text('07/05/2025')),
-                              ),
-                              const DataCell(
-                                SizedBox(width: 100, child: Text('sada')),
-                              ),
-                            ],
-                          ),
-                          DataRow(
-                            cells: [
-                              DataCell(
-                                SizedBox(
-                                  width: 80,
-                                  child: TextButton(
-                                    child: const Text(
-                                      'Excluir',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                              ),
-                              const DataCell(
-                                SizedBox(width: 150, child: Text('10/05/2025')),
-                              ),
-                              const DataCell(
-                                SizedBox(width: 100, child: Text('zfsdfsdfsdfsdf')),
                               ),
                             ],
                           ),
