@@ -9,6 +9,8 @@ android {
     namespace = "com.example.app_gcm_sa"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.13113456"
+    // CASA ndkVersion = "27.0.12077973"
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

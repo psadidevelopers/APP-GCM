@@ -1,3 +1,4 @@
+import 'package:app_gcm_sa/views/splash_screen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_gcm_sa/views/login/login_view.dart';
@@ -19,8 +20,13 @@ class FodaseView extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(
+      path: '/splash',
+      name: 'splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(path: '/', name: 'login', builder: (context, state) => LoginView()),
     GoRoute(
       path: '/home',
