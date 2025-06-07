@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/estilos.dart';
 
-// ignore: must_be_immutable
 class NavigationDrawerWidget extends StatefulWidget {
   const NavigationDrawerWidget({super.key});
 
@@ -18,13 +16,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
 
   late List<Map<String, dynamic>> _allMenuItems;
-
-  // Future<void> _loadEnvironment() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     environment = prefs.getString('environment') ?? "producao";
-  //   });
-  // }
 
   Widget buildMenuItem({
     required String text,

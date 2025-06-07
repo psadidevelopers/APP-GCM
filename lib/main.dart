@@ -8,6 +8,8 @@ import 'package:app_gcm_sa/views/eventos/eventos_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   const String environment = String.fromEnvironment(
     'ENV',
     defaultValue: 'development',

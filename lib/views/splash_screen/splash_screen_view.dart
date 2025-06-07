@@ -121,6 +121,7 @@ class _SplashScreenState extends State<SplashScreen>
                   alignment: AlignmentDirectional.center,
                   children: [
                     CircularProgressIndicator(
+                      color: Estilos.azulClaro,
                       value: progress >= 0 ? progress : 0,
                     ),
                     Container(

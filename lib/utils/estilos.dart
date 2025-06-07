@@ -19,6 +19,10 @@ class Estilos {
   static const azulGradient5 = Color(0xFF044bb0);
   static const azulClaro = Color(0xFF1E8CD2);
   static const colorIconsInicial = Color(0xFF2A93F2);
+  static const colorFilterIconsInicial = ColorFilter.mode(
+    Color(0xFF2A93F2),
+    BlendMode.srcIn,
+  );
   static const colorBGIconsInicial = Color(0xFFCCE9FF);
   static const preto = Color.fromARGB(255, 0, 0, 0);
   static const cinza = Color.fromARGB(255, 117, 117, 117);

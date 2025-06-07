@@ -15,7 +15,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool _obscureText = true;
   bool _isLoading = false;
-  String environment = Configuracoes.environment; // TODO Verificar como armazenar o ambiente no Shared Preferences
+  String environment =
+      Configuracoes
+          .environment; // TODO Verificar como armazenar o ambiente no Shared Preferences
 
   final _formKey = GlobalKey<FormState>();
   final _ifController = TextEditingController();
@@ -75,7 +77,6 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
 
-                      /// Campo Login: IF do Servidor
                       Container(
                         height: 75,
                         padding: const EdgeInsets.only(
@@ -116,7 +117,6 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
 
-                      /// Campo Senha
                       Container(
                         margin: const EdgeInsets.only(top: 25),
                         height: 75,
@@ -175,10 +175,19 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                       ),
-                      if (environment ==
-                          "homologacao") // TODO Verificar como armazenar o ambiente no Shared Preferences
+                      if (environment == "development")
                         Text(
                           "HOMOLOGAÇÃO",
+                          style: Utils.safeGoogleFont(
+                            color: Estilos.vermelho,
+                            fontSize: 14,
+                            'Roboto',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      else
+                        Text(
+                          "PRODUÇÃO",
                           style: Utils.safeGoogleFont(
                             color: Estilos.vermelho,
                             fontSize: 14,
