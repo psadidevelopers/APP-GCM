@@ -24,24 +24,21 @@ class _CadastroViewState extends State<CadastroView> {
   final _formKey = GlobalKey<FormState>();
   final List<Disponibilidade> _disponibilidades = [];
 
+  final _identificacaoFuncionalController =
+      TextEditingController();
+  final _nomeCompletoController = TextEditingController();
+  final _nomeGuerraController = TextEditingController();
+  final _graduacaoController = TextEditingController();
+  final _categoriaCnhController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _turnoTrabalhoController = TextEditingController();
+  final _telefoneCelularController =
+      TextEditingController();
+  final _disponibilidadeController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController identificacaoFuncionalController =
-        TextEditingController();
-    final TextEditingController nomeCompletoController =
-        TextEditingController();
-    final TextEditingController nomeGuerraController = TextEditingController();
-    final TextEditingController graduacaoController = TextEditingController();
-    final TextEditingController categoriaCnhController =
-        TextEditingController();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController turnoTrabalhoController =
-        TextEditingController();
-    final TextEditingController telefoneCelularController =
-        TextEditingController();
-    final TextEditingController disponibilidadeController =
-        TextEditingController();
-
     return Scaffold(
       appBar: Estilos.appbar(context, 'Cadastro'),
       drawer: const NavigationDrawerWidget(),
@@ -76,7 +73,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: identificacaoFuncionalController,
+                      controller: _identificacaoFuncionalController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
@@ -95,7 +92,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: nomeCompletoController,
+                      controller: _nomeCompletoController,
                       decoration: const InputDecoration(
                         labelText: 'Nome Completo',
                         border: OutlineInputBorder(
@@ -112,7 +109,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: nomeGuerraController,
+                      controller: _nomeGuerraController,
                       decoration: const InputDecoration(
                         labelText: 'Nome de Guerra',
                         border: OutlineInputBorder(
@@ -129,7 +126,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: graduacaoController,
+                      controller: _graduacaoController,
                       decoration: const InputDecoration(
                         labelText: 'Graduação',
                         border: OutlineInputBorder(
@@ -146,7 +143,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: categoriaCnhController,
+                      controller: _categoriaCnhController,
                       decoration: const InputDecoration(
                         labelText: 'Categoria CNH',
                         border: OutlineInputBorder(
@@ -163,7 +160,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: emailController,
+                      controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         labelText: 'E-mail',
@@ -181,7 +178,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: turnoTrabalhoController,
+                      controller: _turnoTrabalhoController,
                       decoration: const InputDecoration(
                         labelText: 'Turno atual de trabalho',
                         border: OutlineInputBorder(
@@ -198,7 +195,7 @@ class _CadastroViewState extends State<CadastroView> {
                     const SizedBox(height: 16),
 
                     TextFormField(
-                      controller: telefoneCelularController,
+                      controller: _telefoneCelularController,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -235,7 +232,7 @@ class _CadastroViewState extends State<CadastroView> {
                       children: [
                         Expanded(
                           child: TextFormField(
-                            controller: disponibilidadeController,
+                            controller: _disponibilidadeController,
                             keyboardType: TextInputType.datetime,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -263,7 +260,7 @@ class _CadastroViewState extends State<CadastroView> {
                         ElevatedButton(
                           onPressed: () {
                             final novaData =
-                                disponibilidadeController.text.trim();
+                                _disponibilidadeController.text.trim();
 
                             if (novaData.isEmpty) return;
 
@@ -287,7 +284,7 @@ class _CadastroViewState extends State<CadastroView> {
                               _disponibilidades.add(
                                 Disponibilidade(data: novaData),
                               );
-                              disponibilidadeController.clear();
+                              _disponibilidadeController.clear();
                             });
                           },
                           child: const Icon(Icons.add),

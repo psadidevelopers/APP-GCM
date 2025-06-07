@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Configuracoes {
   static recuperarTamanho(context) {
@@ -7,4 +8,7 @@ class Configuracoes {
     double ffem = fem * 0.97;
     return ffem;
   }
+
+  static String get apiUrl => dotenv.env['API_URL'] ?? '';
+  static String get environment => dotenv.env['ENV'] == 'test' ? "Homologação" : "Produção";
 }

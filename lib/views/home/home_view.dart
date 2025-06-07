@@ -38,6 +38,12 @@ class HomeView extends StatelessWidget {
                   topRight: Radius.circular(10),
                 ),
               ),
+              child: SizedBox(
+                height: 291 * ffem,
+                child: Center(
+                  child: Image.asset('assets/imagens/GCM-Logo.png'),
+                ),
+              ),
             ),
           ),
         ),

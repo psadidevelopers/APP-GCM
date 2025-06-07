@@ -1,3 +1,4 @@
+import 'package:app_gcm_sa/utils/configuracoes.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool _obscureText = true;
   bool _isLoading = false;
-  String environment =
-      "PRODUÇÃO"; // TODO Verificar como armazenar o ambiente no Shared Preferences
+  String environment = Configuracoes.environment; // TODO Verificar como armazenar o ambiente no Shared Preferences
 
   final _formKey = GlobalKey<FormState>();
   final _ifController = TextEditingController();

@@ -5,8 +5,16 @@ import 'package:app_gcm_sa/views/login/login_view.dart';
 import 'package:app_gcm_sa/views/home/home_view.dart';
 import 'package:app_gcm_sa/views/cadastro/cadastro_view.dart';
 import 'package:app_gcm_sa/views/eventos/eventos_view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  const String environment = String.fromEnvironment(
+    'ENV',
+    defaultValue: 'development',
+  );
+
+  await dotenv.load(fileName: '.env.$environment');
+
   runApp(MyApp());
 }
 

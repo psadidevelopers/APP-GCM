@@ -79,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 SizedBox(
                   height: 291 * ffem,
-                  child: Image.asset('assets/imagens/splash_image.png'),
+                  child: Image.asset('assets/imagens/GCM-Logo.png'),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
