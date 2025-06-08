@@ -73,27 +73,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                       ),
                     ],
                   ),
-                  if (notificacoes != null)
-                    if (notificacoes > 0)
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: const BoxDecoration(
-                          color: Estilos.azulGradient3,
-                          // borderRadius: BorderRadius.circular(10),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            notificacoes > 99 ? '99+' : notificacoes.toString(),
-                            style: GoogleFonts.roboto(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Estilos.branco,
-                            ),
-                          ),
-                        ),
-                      ),
                 ],
               ),
             ),

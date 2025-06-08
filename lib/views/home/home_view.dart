@@ -49,8 +49,6 @@ class _HomeViewState extends State<HomeView> {
             scaffoldKey,
             ffem,
             "",
-            icon: true,
-            imageIcon: 'assets/svgIcons/lucide--bell.svg',
           ),
           key: scaffoldKey,
           drawer: NavigationDrawerWidget(),
