@@ -10,5 +10,6 @@ class Configuracoes {
   }
 
   static String get apiUrl => dotenv.env['API_URL'] ?? '';
-  static String get environment => dotenv.env['ENV'] == 'test' ? "Homologação" : "Produção";
+  static String get environment =>
+      dotenv.env['ENV'] == 'development' ? "Homologação" : "Produção";
 }

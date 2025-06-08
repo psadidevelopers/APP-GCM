@@ -8,6 +8,14 @@ class Event {
   final bool isRead;
 
   Event({required this.title, required this.date, required this.isRead});
+
+  factory Event.fromJson(Map<String, dynamic> json) {
+    return Event(
+      title: json['title']!, 
+      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
+      isRead: json['isRead'] ?? false,
+    );
+  }
 }
 
 class EventosView extends StatefulWidget {
@@ -19,7 +27,7 @@ class EventosView extends StatefulWidget {
 
 class _EventosViewState extends State<EventosView> {
   List<Event> events = [];
-  bool isLoading = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -28,31 +36,34 @@ class _EventosViewState extends State<EventosView> {
   }
 
   Future<void> simulateFetch() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulated API delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    final List<Map<String, dynamic>> mockedApiData = [
+      {
+        'title': 'ESSE VC N LEU',
+        'date': DateTime.now().toIso8601String(),
+        'isRead': false,
+      },
+      {
+        'title': 'ESSE VC LEU',
+        'date': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+        'isRead': true,
+      },
+      {
+        'title': 'COISA RUN',
+        'date': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+        'isRead': false,
+      },
+      {
+        'title': 'COISA BOA',
+        'date': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
+        'isRead': true,
+      },
+    ];
+
     setState(() {
-      events = [
-        Event(
-          title: 'Maintenance Scheduled',
-          date: DateTime.now(),
-          isRead: false,
-        ),
-        Event(
-          title: 'New Feature Released',
-          date: DateTime.now().subtract(Duration(days: 1)),
-          isRead: true,
-        ),
-        Event(
-          title: 'System Downtime',
-          date: DateTime.now().subtract(Duration(days: 2)),
-          isRead: false,
-        ),
-        Event(
-          title: 'Weekly Report',
-          date: DateTime.now().subtract(Duration(days: 3)),
-          isRead: true,
-        ),
-      ];
-      isLoading = false;
+      events = mockedApiData.map((json) => Event.fromJson(json)).toList();
+      _isLoading = false;
     });
   }
 
@@ -66,7 +77,7 @@ class _EventosViewState extends State<EventosView> {
       children: [
         Scaffold(
           appBar: Estilos.appbar(context, 'Eventos'),
-          drawer: NavigationDrawerWidget(),
+          drawer: const NavigationDrawerWidget(),
           backgroundColor: Estilos.branco,
           body: Container(
             color: Estilos.azulGradient4,
@@ -80,38 +91,38 @@ class _EventosViewState extends State<EventosView> {
                 ),
               ),
               child:
-                  isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator(color: Estilos.azulClaro))
                       : ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          return Card(
-                            color:
-                                event.isRead
-                                    ? Colors.white
-                                    : Colors.red.shade100,
-                            elevation: 3,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                event.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          itemCount: events.length,
+                          itemBuilder: (context, index) {
+                            final event = events[index];
+                            return Card(
+                              color:
+                                  event.isRead
+                                      ? Colors.white
+                                      : Colors.red.shade100,
+                              elevation: 3,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
                               ),
-                              subtitle: Text(formatDate(event.date)),
-                            ),
-                          );
-                        },
-                      ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  event.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(formatDate(event.date)),
+                              ),
+                            );
+                          },
+                        ),
             ),
           ),
         ),

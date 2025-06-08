@@ -92,7 +92,7 @@ class BtnPadraoSquare extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.black,
-                        fontSize: 11,
+                        fontSize: 14,
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.56, // Use Estilos.preto, se estiver definido em outro lugar.

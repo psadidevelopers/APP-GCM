@@ -175,26 +175,15 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                       ),
-                      if (environment == "development")
-                        Text(
-                          "HOMOLOGAÇÃO",
-                          style: Utils.safeGoogleFont(
-                            color: Estilos.vermelho,
-                            fontSize: 14,
-                            'Roboto',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
-                      else
-                        Text(
-                          "PRODUÇÃO",
-                          style: Utils.safeGoogleFont(
-                            color: Estilos.vermelho,
-                            fontSize: 14,
-                            'Roboto',
-                            fontWeight: FontWeight.w700,
-                          ),
+                      Text(
+                        environment,
+                        style: Utils.safeGoogleFont(
+                          color: Estilos.vermelho,
+                          fontSize: 14,
+                          'Roboto',
+                          fontWeight: FontWeight.w700,
                         ),
+                      ),
                     ],
                   ),
                 ),
