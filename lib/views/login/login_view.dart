@@ -1,3 +1,6 @@
+import 'package:app_gcm_sa/components/snackbar_widget.dart';
+import 'package:app_gcm_sa/services/auth_service.dart';
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:app_gcm_sa/utils/configuracoes.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
@@ -15,13 +18,14 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool _obscureText = true;
   bool _isLoading = false;
-  String environment =
-      Configuracoes
-          .environment; // TODO Verificar como armazenar o ambiente no Shared Preferences
+  String environment = Configuracoes.environment;
 
   final _formKey = GlobalKey<FormState>();
   final _ifController = TextEditingController();
   final _senhaController = TextEditingController();
+
+  final AuthService _authService = AuthService();
+  final SessionManager _sessionManager = SessionManager();
 
   String? _validaLogin(String? texto) {
     if (texto!.isEmpty) {
@@ -35,6 +39,52 @@ class _LoginViewState extends State<LoginView> {
       return "Digite a Senha";
     }
     return null;
+  }
+
+  Future<void> _performLogin() async {
+    // Valida o formulário
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await _authService.login(
+        _ifController.text,
+        _senhaController.text,
+      );
+
+      // Salva a sessão se o login for bem-sucedido
+      await _sessionManager.saveSession(response);
+
+      // Navega para a home (usando 'mounted' para segurança)
+      if (mounted) {
+        context.go("/home");
+      }
+    } catch (e) {
+      // Se a API falhar (qualquer status != 200), mostra o snackbar
+      if (mounted) {
+        showCustomSnackbar(
+          context,
+          message: 'IF ou senha incorretas.',
+          backgroundColor: Estilos.danger,
+          textColor: Estilos.textDanger,
+        );
+      }
+    } finally {
+      // Garante que o loading seja desativado, mesmo se houver erro
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _ifController.dispose();
+    _senhaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -214,18 +264,8 @@ class _LoginViewState extends State<LoginView> {
                         onPressed:
                             _isLoading
                                 ? null
-                                : () async {
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
+                                : _performLogin, // <-- AQUI ESTÁ A MUDANÇA
 
-                                  // await widget.controller.btnLogar(context);
-                                  context.go("/home");
-
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                },
                         child:
                             _isLoading
                                 ? const Center(

@@ -25,9 +25,41 @@ class FodaseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Fodase"));
+    return const Center(child: Text("Fodase"));
   }
 }
+
+class AppShell extends StatelessWidget {
+  const AppShell({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    // Define the routes where pressing back should exit the app.
+    const rootRoutes = ['/home', '/'];
+
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+
+        final router = GoRouter.of(context);
+        final currentLocation = router.routerDelegate.currentConfiguration.uri.toString();
+
+        // If we can pop within the router's stack, do it.
+        // This handles navigation between pages like /home -> /eventos -> back to /home.
+        if (router.canPop()) {
+          router.pop();
+        } else if (rootRoutes.contains(currentLocation)) {
+          // If we are on a root route and cannot pop, the OS will handle the exit.
+          // This part is for added safety, but the logic above usually covers it.
+        }
+      },
+      child: child,
+    );
+  }
+}
+
 
 final _router = GoRouter(
   initialLocation: '/splash',
@@ -37,26 +69,38 @@ final _router = GoRouter(
       name: 'splash',
       builder: (context, state) => const SplashScreen(),
     ),
-    GoRoute(path: '/', name: 'login', builder: (context, state) => LoginView()),
     GoRoute(
-      path: '/home',
-      name: 'home',
-      builder: (context, state) => HomeView(),
+      path: '/',
+      name: 'login',
+      builder: (context, state) => LoginView(),
     ),
-    GoRoute(
-      path: '/cadastro',
-      name: 'cadastro',
-      builder: (context, state) => CadastroView(),
-    ),
-    GoRoute(
-      path: '/eventos',
-      name: 'eventos',
-      builder: (context, state) => EventosView(),
-    ),
-    GoRoute(
-      path: '/fodase',
-      name: 'fodase',
-      builder: (context, state) => FodaseView(),
+
+    ShellRoute(
+      builder: (context, state, child) {
+        return AppShell(child: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/home',
+          name: 'home',
+          builder: (context, state) => HomeView(),
+        ),
+        GoRoute(
+          path: '/cadastro',
+          name: 'cadastro',
+          builder: (context, state) => CadastroView(),
+        ),
+        GoRoute(
+          path: '/eventos',
+          name: 'eventos',
+          builder: (context, state) => EventosView(),
+        ),
+        GoRoute(
+          path: '/fodase',
+          name: 'fodase',
+          builder: (context, state) => const FodaseView(),
+        ),
+      ],
     ),
   ],
 );

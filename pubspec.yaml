@@ -39,6 +39,8 @@ dependencies:
   go_router: ^15.1.2
   brasil_fields: ^1.18.0
   flutter_dotenv: ^5.1.0
+  http: ^1.2.1
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"

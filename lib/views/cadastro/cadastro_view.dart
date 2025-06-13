@@ -1,4 +1,6 @@
 import 'package:app_gcm_sa/components/snackbar_widget.dart';
+import 'package:app_gcm_sa/services/cadastro_service.dart';
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,13 +9,25 @@ import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
 
 class Disponibilidade {
+  final int? idEventovoluntario;
+  final int? idEvento;
   final String data;
   final String? evento;
 
-  Disponibilidade({required this.data, this.evento = ''});
+  Disponibilidade({
+    required this.data,
+    this.idEventovoluntario,
+    this.idEvento,
+    this.evento,
+  });
 
-  factory Disponibilidade.fromJson(Map<String, dynamic> json) {
-    return Disponibilidade(data: json['data'] ?? '', evento: json['evento']);
+  factory Disponibilidade.fromApi(Map<String, dynamic> json) {
+    return Disponibilidade(
+      data: json['data'] ?? '',
+      idEvento: json['id_evento'],
+      idEventovoluntario: json['id_eventovoluntario'],
+      evento: json['evento'],
+    );
   }
 }
 
@@ -40,22 +54,23 @@ class CadastroData {
     required this.disponibilidades,
   });
 
-  factory CadastroData.fromJson(Map<String, dynamic> json) {
-    var disponibilidadesFromJson = json['disponibilidades'] as List? ?? [];
+  factory CadastroData.fromApi(Map<String, dynamic> json) {
+    final String telefone =
+        '(${json['ddd_telefone_celular'] ?? ''}) ${json['num_telefone_celular'] ?? ''}';
+
+    var eventosApi = json['eventosVoluntario'] as List? ?? [];
     List<Disponibilidade> disponibilidadeList =
-        disponibilidadesFromJson
-            .map((i) => Disponibilidade.fromJson(i))
-            .toList();
+        eventosApi.map((i) => Disponibilidade.fromApi(i)).toList();
 
     return CadastroData(
-      identificacaoFuncional: json['identificacaoFuncional'] ?? '',
-      nomeCompleto: json['nomeCompleto'] ?? '',
-      nomeGuerra: json['nomeGuerra'] ?? '',
+      identificacaoFuncional: json['identificacao_funcional'] ?? '',
+      nomeCompleto: json['nome_completo'] ?? '',
+      nomeGuerra: json['nome_guerra'] ?? '',
       graduacao: json['graduacao'] ?? '',
-      categoriaCnh: json['categoriaCnh'] ?? '',
+      categoriaCnh: json['categoria_cnh'] ?? '',
       email: json['email'] ?? '',
-      turnoTrabalho: json['turnoTrabalho'] ?? '',
-      telefoneCelular: json['telefoneCelular'] ?? '',
+      turnoTrabalho: '',
+      telefoneCelular: telefone,
       disponibilidades: disponibilidadeList,
     );
   }
@@ -74,6 +89,9 @@ class _CadastroViewState extends State<CadastroView> {
   CadastroData? _cadastroData;
   bool _isLoading = true;
 
+  final SessionManager _sessionManager = SessionManager();
+  final CadastroService _cadastroService = CadastroService();
+
   final _identificacaoFuncionalController = TextEditingController();
   final _nomeCompletoController = TextEditingController();
   final _nomeGuerraController = TextEditingController();
@@ -87,44 +105,48 @@ class _CadastroViewState extends State<CadastroView> {
   @override
   void initState() {
     super.initState();
-    _fetchCadastroData();
+    _fetchAndFillCadastroData();
   }
 
-  Future<void> _fetchCadastroData() async {
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> _fetchAndFillCadastroData() async {
+    try {
+      final codFuncionario = await _sessionManager.getCodFuncionario();
+      final token = await _sessionManager.getToken();
 
-    final mockedData = {
-      'identificacaoFuncional': '54321',
-      'nomeCompleto': 'Maria Oliveira Souza',
-      'nomeGuerra': 'GCM Oliveira',
-      'graduacao': 'GCM 1ª Classe',
-      'categoriaCnh': 'AD',
-      'email': 'maria.oliveira@gcm.sa.gov.br',
-      'turnoTrabalho': 'Noturno 12x36',
-      'telefoneCelular': '(11) 91234-5678',
-      'disponibilidades': [
-        {'data': '20/06/2025', 'evento': 'COISARUN'},
-        {'data': '29/06/2025', 'evento': null},
-        {'data': '09/07/2025', 'evento': 'Feriado Estadual'},
-      ],
-    };
+      if (codFuncionario == null || token == null) {
+        throw Exception("Sessão inválida. Faça o login novamente.");
+      }
 
-    final data = CadastroData.fromJson(mockedData);
+      final apiData = await _cadastroService.getCadastro(codFuncionario, token);
 
-    setState(() {
-      _cadastroData = data;
+      final data = CadastroData.fromApi(apiData);
 
-      _identificacaoFuncionalController.text = data.identificacaoFuncional;
-      _nomeCompletoController.text = data.nomeCompleto;
-      _nomeGuerraController.text = data.nomeGuerra;
-      _graduacaoController.text = data.graduacao;
-      _categoriaCnhController.text = data.categoriaCnh;
-      _emailController.text = data.email;
-      _turnoTrabalhoController.text = data.turnoTrabalho;
-      _telefoneCelularController.text = data.telefoneCelular;
+      setState(() {
+        _cadastroData = data;
 
-      _isLoading = false;
-    });
+        _identificacaoFuncionalController.text = data.identificacaoFuncional;
+        _nomeCompletoController.text = data.nomeCompleto;
+        _nomeGuerraController.text = data.nomeGuerra;
+        _graduacaoController.text = data.graduacao;
+        _categoriaCnhController.text = data.categoriaCnh;
+        _emailController.text = data.email;
+        _telefoneCelularController.text = data.telefoneCelular;
+        // TODO: Incluir turnoTrabalho depois que att API -> _turnoTrabalhoController 
+
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        showCustomSnackbar(
+          context,
+          message: 'Erro ao carregar dados: ${e.toString()}',
+          backgroundColor: Estilos.danger,
+        );
+      }
+    }
   }
 
   @override

@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../utils/estilos.dart';
@@ -22,10 +23,32 @@ class _SplashScreenState extends State<SplashScreen>
   late final AnimationController _controller;
   late final Animation<double> _scaleAnimation;
   late final Animation<double> _fadeAnimation;
+  final SessionManager _sessionManager = SessionManager();
+
+  Future<void> _checkSessionAndRedirect() async {
+    // Um pequeno delay para a splash screen ser visível, melhorando a UX.
+    await Future.delayed(const Duration(seconds: 2));
+
+    final bool isSessionValid = await _sessionManager.isSessionValid();
+
+    // A verificação 'mounted' é uma boa prática para evitar erros se o widget
+    // for removido da árvore enquanto a verificação assíncrona acontece.
+    if (mounted) {
+      if (isSessionValid) {
+        // Se a sessão for válida, vai para a home
+        context.go('/home');
+      } else {
+        // Se não, vai para a tela de login
+        context.go('/');
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _checkSessionAndRedirect();
+
 
     _controller = AnimationController(
       vsync: this,

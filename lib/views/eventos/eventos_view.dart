@@ -1,19 +1,31 @@
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
+import 'package:app_gcm_sa/services/eventos_service.dart';
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:flutter/material.dart';
 
 class Event {
+  final int idEventovoluntario;
+  final int idEvento;
   final String title;
   final DateTime date;
   final bool isRead;
 
-  Event({required this.title, required this.date, required this.isRead});
+  Event({
+    required this.idEventovoluntario,
+    required this.idEvento,
+    required this.title,
+    required this.date,
+    required this.isRead,
+  });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      title: json['title']!, 
-      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
-      isRead: json['isRead'] ?? false,
+      idEventovoluntario: json['id_eventovoluntario'] ?? 0,
+      idEvento: json['id_evento'] ?? 0,
+      title: json['dsc_titulo'] ?? 'Evento sem título',
+      date: DateTime.parse(json['data'] ?? DateTime.now().toIso8601String()),
+      isRead: true,
     );
   }
 }
@@ -29,42 +41,45 @@ class _EventosViewState extends State<EventosView> {
   List<Event> events = [];
   bool _isLoading = true;
 
+  final EventosService _eventosService = EventosService();
+  final SessionManager _sessionManager = SessionManager();
+
   @override
   void initState() {
     super.initState();
-    simulateFetch();
+    _fetchEventos();
   }
 
-  Future<void> simulateFetch() async {
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> _fetchEventos() async {
+    try {
+      final codFuncionario = await _sessionManager.getCodFuncionario();
+      final token = await _sessionManager.getToken();
 
-    final List<Map<String, dynamic>> mockedApiData = [
-      {
-        'title': 'ESSE VC N LEU',
-        'date': DateTime.now().toIso8601String(),
-        'isRead': false,
-      },
-      {
-        'title': 'ESSE VC LEU',
-        'date': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        'isRead': true,
-      },
-      {
-        'title': 'COISA RUN',
-        'date': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
-        'isRead': false,
-      },
-      {
-        'title': 'COISA BOA',
-        'date': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
-        'isRead': true,
-      },
-    ];
+      if (codFuncionario == null || token == null) {
+        throw Exception("Sessão inválida. Faça o login novamente.");
+      }
 
-    setState(() {
-      events = mockedApiData.map((json) => Event.fromJson(json)).toList();
-      _isLoading = false;
-    });
+      final List<dynamic> apiData = await _eventosService.getEventos(
+        codFuncionario,
+        token,
+      );
+
+      setState(() {
+        events = apiData.map((json) => Event.fromJson(json)).toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao carregar os eventos: ${e.toString()}'),
+          ),
+        );
+      }
+    }
   }
 
   String formatDate(DateTime date) {
@@ -92,37 +107,41 @@ class _EventosViewState extends State<EventosView> {
               ),
               child:
                   _isLoading
-                      ? const Center(child: CircularProgressIndicator(color: Estilos.azulClaro))
-                      : ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          itemCount: events.length,
-                          itemBuilder: (context, index) {
-                            final event = events[index];
-                            return Card(
-                              color:
-                                  event.isRead
-                                      ? Colors.white
-                                      : Colors.red.shade100,
-                              elevation: 3,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  event.title,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(formatDate(event.date)),
-                              ),
-                            );
-                          },
+                      ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Estilos.azulClaro,
                         ),
+                      )
+                      : ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          return Card(
+                            color:
+                                event.isRead
+                                    ? Colors.white
+                                    : Colors.red.shade100,
+                            elevation: 3,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                event.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(formatDate(event.date)),
+                            ),
+                          );
+                        },
+                      ),
             ),
           ),
         ),
