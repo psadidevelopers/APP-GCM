@@ -29,4 +29,25 @@ class CadastroService {
       );
     }
   }
+
+  Future<void> salvarCadastro(Map<String, dynamic> payload, String token) async {
+    final url = Uri.parse('$_baseUrl/cadastro');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(payload),
+    );
+
+    if (response.statusCode == 204) {
+      // Sucesso, não precisa retornar nada
+      return;
+    } else {
+      throw Exception('Falha ao salvar os dados. Status: ${response.statusCode}');
+    }
+  }
+
 }

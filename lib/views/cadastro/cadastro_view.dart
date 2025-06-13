@@ -88,6 +88,7 @@ class _CadastroViewState extends State<CadastroView> {
 
   CadastroData? _cadastroData;
   bool _isLoading = true;
+  bool _isSaving = false; // Loading exclusivo do botão Salvar
 
   final SessionManager _sessionManager = SessionManager();
   final CadastroService _cadastroService = CadastroService();
@@ -131,7 +132,7 @@ class _CadastroViewState extends State<CadastroView> {
         _categoriaCnhController.text = data.categoriaCnh;
         _emailController.text = data.email;
         _telefoneCelularController.text = data.telefoneCelular;
-        // TODO: Incluir turnoTrabalho depois que att API -> _turnoTrabalhoController 
+        // TODO: Incluir turnoTrabalho depois que att API -> _turnoTrabalhoController
 
         _isLoading = false;
       });
@@ -145,6 +146,86 @@ class _CadastroViewState extends State<CadastroView> {
           message: 'Erro ao carregar dados: ${e.toString()}',
           backgroundColor: Estilos.danger,
         );
+      }
+    }
+  }
+
+  Future<void> _performSave() async {
+    setState(() => _isSaving = true);
+
+    try {
+      // 1. Obter dados da sessão
+      final codFuncionario = await _sessionManager.getCodFuncionario();
+      final token = await _sessionManager.getToken();
+      if (codFuncionario == null || token == null) {
+        throw Exception("Sessão inválida.");
+      }
+
+      // 2. Montar o payload (corpo da requisição) com os dados da tela
+
+      // Helper para extrair DDD e número do telefone formatado
+      String ddd = '';
+      String numero = '';
+      final telefoneCompleto = _telefoneCelularController.text.replaceAll(
+        RegExp(r'\D'),
+        '',
+      );
+      if (telefoneCompleto.length == 11) {
+        ddd = telefoneCompleto.substring(0, 2);
+        numero = telefoneCompleto.substring(2);
+      }
+
+      // Helper para converter data de DD/MM/YYYY para formato ISO 8601
+      String formatToIso(String ddMMyyyy) {
+        final parts = ddMMyyyy.split('/');
+        // Formato YYYY-MM-DDTHH:mm:ss.sssZ
+        return DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        ).toIso8601String();
+      }
+
+      // Criando o mapa do payload
+      final Map<String, dynamic> payload = {
+        "cod_funcionario": int.tryParse(codFuncionario) ?? 0,
+        "nome_completo": _nomeCompletoController.text,
+        "nome_guerra": _nomeGuerraController.text,
+        "email": _emailController.text,
+        "ddd_telefone_celular": ddd,
+        "num_telefone_celular": numero,
+        "categoria_cnh": _categoriaCnhController.text,
+        "disponibilidades":
+            _cadastroData?.disponibilidades
+                .map(
+                  (d) => {
+                    "cod_funcionario": int.tryParse(codFuncionario) ?? 0,
+                    "data": formatToIso(d.data),
+                    "id_evento": d.idEvento ?? 0,
+                  },
+                )
+                .toList() ??
+            [],
+      };
+
+      // 3. Chamar o serviço para enviar os dados
+      await _cadastroService.salvarCadastro(payload, token);
+
+      // 4. Mostrar snackbar de sucesso
+      if (mounted) {
+        showCustomSnackbar(context, message: 'Dados salvos com sucesso!');
+      }
+    } catch (e) {
+      if (mounted) {
+        showCustomSnackbar(
+          context,
+          message: 'Erro ao salvar: ${e.toString()}',
+          backgroundColor: Estilos.danger,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -646,12 +727,7 @@ class _CadastroViewState extends State<CadastroView> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Estilos.preto,
                                   ),
-                                  onPressed: () {
-                                    showCustomSnackbar(
-                                      context,
-                                      message: 'Salvo com sucesso!',
-                                    );
-                                  },
+                                  onPressed: _isSaving ? null : _performSave,
                                   child: const Text(
                                     'Salvar',
                                     style: TextStyle(
