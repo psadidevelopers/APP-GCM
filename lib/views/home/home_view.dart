@@ -1,5 +1,6 @@
 import 'package:app_gcm_sa/components/btn_padrao_square.dart';
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:app_gcm_sa/utils/configuracoes.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // final SessionManager _sessionManager = SessionManager();
+
   @override
   Widget build(BuildContext context) {
     double ffem = Configuracoes.recuperarTamanho(context);
@@ -43,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: Estilos.appBarHome(context, 'Raphael', scaffoldKey, ffem, ""),
+          appBar: Estilos.appBarHome(context, "PEGAR NOME DA API", scaffoldKey, ffem, ""),
           key: scaffoldKey,
           drawer: NavigationDrawerWidget(),
           backgroundColor: Estilos.branco,
