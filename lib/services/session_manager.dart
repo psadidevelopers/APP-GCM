@@ -12,7 +12,10 @@ class SessionManager {
   Future<void> saveSession(LoginResponse response) async {
     await _storage.write(key: _keyToken, value: response.token);
     await _storage.write(key: _keyExpiration, value: response.expiration);
-    await _storage.write(key: _keyCodFuncionario, value: response.codFuncionario);
+    await _storage.write(
+      key: _keyCodFuncionario,
+      value: response.codFuncionario,
+    );
   }
 
   Future<String?> getToken() async {

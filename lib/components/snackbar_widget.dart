@@ -16,9 +16,7 @@ void showCustomSnackbar(
     behavior: SnackBarBehavior.floating,
     backgroundColor: backgroundColor,
     duration: duration,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     content: Text(
       message,
       style: GoogleFonts.getFont(

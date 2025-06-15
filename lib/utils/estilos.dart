@@ -67,7 +67,11 @@ class Estilos {
       shadowColor: Colors.transparent,
       titleTextStyle: GoogleFonts.getFont(
         'Comfortaa',
-        textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Estilos.preto),
+        textStyle: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: Estilos.preto,
+        ),
       ),
     ),
     primaryColor: const Color(0xff37474f),
@@ -99,15 +103,25 @@ class Estilos {
       toolbarHeight: toolbarHeight ?? 112,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: statusBarColor ?? Colors.transparent,
-        statusBarIconBrightness: statusBarIconBrightness ?? (Platform.isIOS ? Brightness.dark : Brightness.light),
-        statusBarBrightness: statusBarBrightness ?? (Platform.isIOS ? Brightness.dark : Brightness.light),
+        statusBarIconBrightness:
+            statusBarIconBrightness ??
+            (Platform.isIOS ? Brightness.dark : Brightness.light),
+        statusBarBrightness:
+            statusBarBrightness ??
+            (Platform.isIOS ? Brightness.dark : Brightness.light),
       ),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: gradientColors ?? [const Color(0xFF045AC2), const Color(0xFF02298A), const Color(0xFF021B79)],
+            colors:
+                gradientColors ??
+                [
+                  const Color(0xFF045AC2),
+                  const Color(0xFF02298A),
+                  const Color(0xFF021B79),
+                ],
           ),
         ),
       ),
@@ -149,23 +163,34 @@ class Estilos {
         if (icon)
           GestureDetector(
             onTap: onTap as void Function()?,
-            child: imageIcon != null
-                ? SvgPicture.asset(
-                    imageIcon,
-                    color: const Color(0xFFFFFFFF),
-                    width: 24 * (ffem ?? 1),
-                    height: 24 * (ffem ?? 1),
-                  )
-                : const Icon(Icons.visibility),
+            child:
+                imageIcon != null
+                    ? SvgPicture.asset(
+                      imageIcon,
+                      color: const Color(0xFFFFFFFF),
+                      width: 24 * (ffem ?? 1),
+                      height: 24 * (ffem ?? 1),
+                    )
+                    : const Icon(Icons.visibility),
           ),
       ],
     );
   }
 
-  static appBarHome(context, titulo, scaffoldKey, double ffem, String ifServidor, {bool icon = false, onTap, String? imageIcon}) {
+  static appBarHome(
+    context,
+    titulo,
+    scaffoldKey,
+    double ffem,
+    String ifServidor, {
+    bool icon = false,
+    onTap,
+    String? imageIcon,
+  }) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness:
+          Platform.isIOS ? Brightness.dark : Brightness.light,
       statusBarBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
     );
 
@@ -201,10 +226,7 @@ class Estilos {
                       onTap: () {
                         scaffoldKey.currentState?.openDrawer();
                       },
-                      child: const Icon(
-                        Icons.menu,
-                        color: Estilos.branco,
-                      ),
+                      child: const Icon(Icons.menu, color: Estilos.branco),
                     ),
                   ),
                   Text(
@@ -222,16 +244,17 @@ class Estilos {
               ),
               icon
                   ? GestureDetector(
-                      onTap: onTap,
-                      child: imageIcon != null
-                          ? SvgPicture.asset(
+                    onTap: onTap,
+                    child:
+                        imageIcon != null
+                            ? SvgPicture.asset(
                               imageIcon,
                               color: Estilos.branco,
                               width: 24,
                               height: 24,
                             )
-                          : Container(),
-                    )
+                            : Container(),
+                  )
                   : Container(),
             ],
           ),
@@ -256,7 +279,13 @@ class Estilos {
     );
   }
 
-  static appbar(context, titulo, {bool icon = false, onTap, String? imageIcon}) {
+  static appbar(
+    context,
+    titulo, {
+    bool icon = false,
+    onTap,
+    String? imageIcon,
+  }) {
     double ffem = Configuracoes.recuperarTamanho(context);
     return AppBar(
       backgroundColor: Estilos.azulGradient4,
@@ -265,8 +294,10 @@ class Estilos {
       toolbarHeight: 112 * ffem,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
-        statusBarBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness:
+            Platform.isIOS ? Brightness.dark : Brightness.light,
+        statusBarBrightness:
+            Platform.isIOS ? Brightness.dark : Brightness.light,
       ),
       flexibleSpace: Container(
         decoration: const BoxDecoration(
@@ -285,25 +316,29 @@ class Estilos {
             titulo,
             style: Utils.safeGoogleFont(
               'Nunito',
-              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 0, letterSpacing: -0.24, color: Estilos.branco),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.24,
+                color: Estilos.branco,
+              ),
             ),
           ),
           icon
               ? GestureDetector(
-                  onTap: onTap,
-                  child: imageIcon != null
-                      ? SvgPicture.asset(
+                onTap: onTap,
+                child:
+                    imageIcon != null
+                        ? SvgPicture.asset(
                           imageIcon,
                           color: Estilos.branco,
                           width: 24 * ffem,
                           height: 24 * ffem,
                         )
-                      : const Icon(
-                          Icons.visibility,
-                          color: Estilos.branco,
-                        ),
-                )
-              : Container()
+                        : const Icon(Icons.visibility, color: Estilos.branco),
+              )
+              : Container(),
         ],
       ),
       elevation: 0,
@@ -314,8 +349,10 @@ class Estilos {
     return AppBar(
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
-        statusBarBrightness: Platform.isIOS ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness:
+            Platform.isIOS ? Brightness.dark : Brightness.light,
+        statusBarBrightness:
+            Platform.isIOS ? Brightness.dark : Brightness.light,
       ),
       foregroundColor: Estilos.branco,
       toolbarHeight: 112,
@@ -339,7 +376,13 @@ class Estilos {
               overflow: TextOverflow.visible,
               style: Utils.safeGoogleFont(
                 'Nunito',
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 0, letterSpacing: -0.24, color: Estilos.branco),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: -0.24,
+                  color: Estilos.branco,
+                ),
               ),
             ),
           ),
@@ -355,8 +398,10 @@ class Estilos {
       toolbarHeight: 60 * ffem,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Platform.isIOS ? Brightness.light : Brightness.dark,
-        statusBarBrightness: Platform.isIOS ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness:
+            Platform.isIOS ? Brightness.light : Brightness.dark,
+        statusBarBrightness:
+            Platform.isIOS ? Brightness.light : Brightness.dark,
       ),
       backgroundColor: Estilos.branco,
       elevation: 0,

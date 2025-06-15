@@ -21,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
   String environment = Configuracoes.environment;
 
   final _formKey = GlobalKey<FormState>();
-  final _ifController = TextEditingController();
+  final _cpfController = TextEditingController();
   final _senhaController = TextEditingController();
 
   final AuthService _authService = AuthService();
@@ -29,7 +29,7 @@ class _LoginViewState extends State<LoginView> {
 
   String? _validaLogin(String? texto) {
     if (texto!.isEmpty) {
-      return "Digite o IF";
+      return "Digite o CPF";
     }
     return null;
   }
@@ -51,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
 
     try {
       final response = await _authService.login(
-        _ifController.text,
+        _cpfController.text,
         _senhaController.text,
       );
 
@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
       if (mounted) {
         showCustomSnackbar(
           context,
-          message: 'IF ou senha incorretas.',
+          message: 'CPF ou senha incorretas.',
           backgroundColor: Estilos.danger,
           textColor: Estilos.textDanger,
         );
@@ -82,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void dispose() {
-    _ifController.dispose();
+    _cpfController.dispose();
     _senhaController.dispose();
     super.dispose();
   }
@@ -142,7 +142,7 @@ class _LoginViewState extends State<LoginView> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          controller: _ifController,
+                          controller: _cpfController,
                           validator: _validaLogin,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
@@ -151,8 +151,8 @@ class _LoginViewState extends State<LoginView> {
                                 Radius.circular(10),
                               ),
                             ),
-                            labelText: 'IF:',
-                            hintText: 'Digite a Identificação Funcional',
+                            labelText: 'CPF:',
+                            hintText: 'Digite seu CPF',
                           ),
                           onChanged: (value) {
                             if (value.length == 14) {

@@ -48,7 +48,7 @@ class BtnPadraoSquare extends StatelessWidget {
                 blurRadius: 10,
                 offset: Offset(0, 4),
                 spreadRadius: 0,
-              )
+              ),
             ],
             //border: Border.all(color: Estilos.cinzaClaro, width: 0.7 * ffem), // Adiciona a borda preta
           ),
@@ -62,22 +62,21 @@ class BtnPadraoSquare extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       color: bgIconColor,
-                      borderRadius: BorderRadius.circular(100), // Define o raio em pixels
+                      borderRadius: BorderRadius.circular(
+                        100,
+                      ), // Define o raio em pixels
                     ),
                     width: 45,
                     height: 45,
                   ),
                   icon == 'badge_outlined'
-                      ? Icon(
-                          Icons.badge_outlined,
-                          color: iconColor,
-                        )
+                      ? Icon(Icons.badge_outlined, color: iconColor)
                       : SvgPicture.asset(
-                          icon,
-                          colorFilter: iconColorFilter,
-                          width: 23 * ffem,
-                          height: 23 * ffem,
-                        )
+                        icon,
+                        colorFilter: iconColorFilter,
+                        width: 23 * ffem,
+                        height: 23 * ffem,
+                      ),
                 ],
               ),
               Container(
@@ -95,7 +94,8 @@ class BtnPadraoSquare extends StatelessWidget {
                         fontSize: 14,
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 0.56, // Use Estilos.preto, se estiver definido em outro lugar.
+                        letterSpacing:
+                            0.56, // Use Estilos.preto, se estiver definido em outro lugar.
                       ),
                     ),
                   ],

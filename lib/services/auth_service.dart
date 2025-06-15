@@ -1,23 +1,18 @@
-
 import 'dart:convert';
 import 'package:app_gcm_sa/models/login_response.dart';
+import 'package:app_gcm_sa/utils/configuracoes.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String _baseUrl = 'https://apihomologacao.santoandre.sp.gov.br/bdgm/api/v1';
+  final String _baseUrl = Configuracoes.apiUrl;
 
   Future<LoginResponse> login(String usuario, String senha) async {
     final url = Uri.parse('$_baseUrl/login');
-    
+
     final response = await http.post(
       url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'usuario': usuario,
-        'senha': senha,
-      }),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'usuario': usuario, 'senha': senha}),
     );
 
     if (response.statusCode == 200) {

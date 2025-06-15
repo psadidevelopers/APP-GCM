@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'package:app_gcm_sa/utils/configuracoes.dart';
 import 'package:http/http.dart' as http;
 
 class CadastroService {
-  final String _baseUrl =
-      'https://apihomologacao.santoandre.sp.gov.br/bdgm/api/v1';
+  final String _baseUrl = Configuracoes.apiUrl;
 
   Future<Map<String, dynamic>> getCadastro(
     String codFuncionario,
@@ -30,7 +30,10 @@ class CadastroService {
     }
   }
 
-  Future<void> salvarCadastro(Map<String, dynamic> payload, String token) async {
+  Future<void> salvarCadastro(
+    Map<String, dynamic> payload,
+    String token,
+  ) async {
     final url = Uri.parse('$_baseUrl/cadastro');
 
     final response = await http.put(
@@ -46,8 +49,9 @@ class CadastroService {
       // Sucesso, não precisa retornar nada
       return;
     } else {
-      throw Exception('Falha ao salvar os dados. Status: ${response.statusCode}');
+      throw Exception(
+        'Falha ao salvar os dados. Status: ${response.statusCode}',
+      );
     }
   }
-
 }

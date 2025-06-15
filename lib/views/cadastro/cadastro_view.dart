@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
-
+import 'package:intl/intl.dart';
 class Disponibilidade {
   final int? idEventovoluntario;
   final int? idEvento;
@@ -244,6 +244,32 @@ class _CadastroViewState extends State<CadastroView> {
     super.dispose();
   }
 
+  Future<void> _selecionarDataDisponibilidade() async {
+    // Esconde o teclado caso esteja aberto
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    final DateTime? dataSelecionada = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(), // Impede a seleção de datas passadas
+      lastDate: DateTime(
+        DateTime.now().year + 2,
+      ), // Permite selecionar até 2 anos no futuro
+      locale: const Locale(
+        'pt',
+        'BR',
+      ), // Garante que o calendário esteja em português
+    );
+
+    if (dataSelecionada != null) {
+      // Formata a data para o padrão DD/MM/AAAA e atualiza o controller
+      final String dataFormatada = DateFormat(
+        'dd/MM/yyyy',
+      ).format(dataSelecionada);
+      _disponibilidadeController.text = dataFormatada;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -478,13 +504,15 @@ class _CadastroViewState extends State<CadastroView> {
                                 Expanded(
                                   child: TextFormField(
                                     controller: _disponibilidadeController,
-                                    keyboardType: TextInputType.datetime,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                      DataInputFormatter(),
-                                    ],
+                                    readOnly: true, // Impede o teclado de abrir
+                                    onTap:
+                                        _selecionarDataDisponibilidade, // Chama o calendário ao tocar
                                     decoration: const InputDecoration(
                                       labelText: 'Data de disponibilidade',
+                                      hintText: 'Selecione uma data',
+                                      suffixIcon: Icon(
+                                        Icons.calendar_today,
+                                      ), // Ícone para indicar ação
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: Estilos.cinzaClaro,
@@ -720,7 +748,11 @@ class _CadastroViewState extends State<CadastroView> {
                                 height: 52,
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Estilos.cinzaClaro),
-                                  color: Estilos.preto,
+
+                                  color:
+                                      _isSaving
+                                          ? Colors.grey[600]
+                                          : Estilos.preto,
                                   borderRadius: BorderRadius.circular(7),
                                 ),
                                 child: ElevatedButton(
@@ -728,13 +760,23 @@ class _CadastroViewState extends State<CadastroView> {
                                     backgroundColor: Estilos.preto,
                                   ),
                                   onPressed: _isSaving ? null : _performSave,
-                                  child: const Text(
-                                    'Salvar',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                  child:
+                                      _isSaving
+                                          ? const SizedBox(
+                                            height: 24,
+                                            width: 24,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2.5,
+                                            ),
+                                          )
+                                          : const Text(
+                                            'Salvar',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                 ),
                               ),
                             ),

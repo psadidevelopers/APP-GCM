@@ -4,10 +4,7 @@ import '../../utils/estilos.dart';
 import '../../utils/utils.dart';
 
 class ManutencaoView extends StatefulWidget {
-  const ManutencaoView({
-    required this.title,
-    super.key,
-  });
+  const ManutencaoView({required this.title, super.key});
   final String title;
 
   @override
@@ -45,10 +42,7 @@ class _ManutencaoViewState extends State<ManutencaoView> {
               padding: const EdgeInsets.fromLTRB(0, 30, 0, 50),
               child: Column(
                 children: [
-                  Image.asset(
-                    'assets/imagens/manutencao.png',
-                    height: 200,
-                  ),
+                  Image.asset('assets/imagens/manutencao.png', height: 200),
                   Container(
                     padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: Text(
@@ -74,10 +68,10 @@ class _ManutencaoViewState extends State<ManutencaoView> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

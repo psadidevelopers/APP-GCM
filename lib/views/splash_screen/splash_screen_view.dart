@@ -49,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _checkSessionAndRedirect();
 
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),

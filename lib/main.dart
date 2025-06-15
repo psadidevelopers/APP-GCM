@@ -1,5 +1,6 @@
 import 'package:app_gcm_sa/views/splash_screen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_gcm_sa/views/login/login_view.dart';
 import 'package:app_gcm_sa/views/home/home_view.dart';
@@ -44,7 +45,8 @@ class AppShell extends StatelessWidget {
         if (didPop) return;
 
         final router = GoRouter.of(context);
-        final currentLocation = router.routerDelegate.currentConfiguration.uri.toString();
+        final currentLocation =
+            router.routerDelegate.currentConfiguration.uri.toString();
 
         // If we can pop within the router's stack, do it.
         // This handles navigation between pages like /home -> /eventos -> back to /home.
@@ -60,7 +62,6 @@ class AppShell extends StatelessWidget {
   }
 }
 
-
 final _router = GoRouter(
   initialLocation: '/splash',
   routes: [
@@ -69,11 +70,7 @@ final _router = GoRouter(
       name: 'splash',
       builder: (context, state) => const SplashScreen(),
     ),
-    GoRoute(
-      path: '/',
-      name: 'login',
-      builder: (context, state) => LoginView(),
-    ),
+    GoRoute(path: '/', name: 'login', builder: (context, state) => LoginView()),
 
     ShellRoute(
       builder: (context, state, child) {
@@ -115,6 +112,12 @@ class MyApp extends StatelessWidget {
       title: 'GCM App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('pt', 'BR')],
     );
   }
 }

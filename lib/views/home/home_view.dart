@@ -43,13 +43,7 @@ class _HomeViewState extends State<HomeView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: Estilos.appBarHome(
-            context,
-            'Raphael',
-            scaffoldKey,
-            ffem,
-            "",
-          ),
+          appBar: Estilos.appBarHome(context, 'Raphael', scaffoldKey, ffem, ""),
           key: scaffoldKey,
           drawer: NavigationDrawerWidget(),
           backgroundColor: Estilos.branco,
