@@ -13,7 +13,7 @@ class Event {
   final String categoriaCnh;
   final String viaturaPermitida;
   final String armaHabilitada;
-  bool isRead; // Removido 'final' para permitir alteração
+  String leuNotificacaoEvento;
 
   Event({
     required this.idEventovoluntario,
@@ -24,20 +24,20 @@ class Event {
     required this.categoriaCnh,
     required this.viaturaPermitida,
     required this.armaHabilitada,
-    required this.isRead,
+    required this.leuNotificacaoEvento,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       idEventovoluntario: json['id_eventovoluntario'] ?? 0,
       idEvento: json['id_evento'] ?? 0,
-      titulo: json['dsc_titulo'] ?? 'Evento sem título',
+      titulo: json['dsc_titulo'] ?? 'Nenhum evento cadastrado aqui ainda!',
       data: json['data'],
       nomeGuerra: json['dsc_nome_guerra'] ?? 'N/A',
       categoriaCnh: json['dsc_categoria_cnh'] ?? 'N/A',
       viaturaPermitida: json['ind_viatura_permitida'] ?? 'N',
       armaHabilitada: json['ind_arma_habilitada'] ?? 'N',
-      isRead: true, // Por padrão, eventos carregados são marcados como lidos
+      leuNotificacaoEvento: json['ind_leu_notificacao'] ?? 'N',
     );
   }
 }
@@ -57,9 +57,44 @@ class _EventosViewState extends State<EventosView> {
   final SessionManager _sessionManager = SessionManager();
 
   @override
+  void dispose() {
+    // Chama a função de sincronização sem esperar (fire-and-forget)
+    _sincronizarNotificacoesLidas();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _fetchEventos();
+  }
+
+  Future<void> _sincronizarNotificacoesLidas() async {
+    List<Event> eventosRecemLidos =
+        events
+            .where(
+              (event) =>
+                  event.leuNotificacaoEvento == 'S' && event.idEvento > 0,
+            )
+            .toList();
+
+    if (eventosRecemLidos.isEmpty) {
+      return;
+    }
+
+    try {
+      final token = await _sessionManager.getToken();
+      if (token == null) return; // Não pode sincronizar sem token
+
+      await _eventosService.marcarNotificacoesComoLidas(
+        eventosRecemLidos,
+        token,
+      );
+    } catch (e) {
+      debugPrint(
+        'Erro ao sincronizar notificações lidas: ${e.toString()}',
+      );
+    }
   }
 
   Future<void> _fetchEventos() async {
@@ -197,7 +232,7 @@ class _EventosViewState extends State<EventosView> {
                           final event = events[index];
                           return Card(
                             color:
-                                event.isRead
+                                event.leuNotificacaoEvento == 'S' && event.idEvento > 0
                                     ? Colors.white
                                     : Colors.red.shade100,
                             elevation: 3,
@@ -218,12 +253,15 @@ class _EventosViewState extends State<EventosView> {
                               subtitle: Text(event.data),
                               onTap: () {
                                 // Marca o evento como lido e exibe o modal
-                                if (!event.isRead) {
+                                if (event.leuNotificacaoEvento == 'N' &&
+                                    event.idEvento > 0) {
                                   setState(() {
-                                    event.isRead = true;
+                                    event.leuNotificacaoEvento = 'S';
                                   });
                                 }
-                                _exibirDetalhesDoEvento(event);
+                                if (event.idEvento > 0) {
+                                  _exibirDetalhesDoEvento(event);
+                                }
                               },
                             ),
                           );

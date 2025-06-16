@@ -1,3 +1,4 @@
+import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class NavigationDrawerWidget extends StatefulWidget {
 
 class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
+  final SessionManager _sessionManager = SessionManager();
 
   late List<Map<String, dynamic>> _allMenuItems;
 
@@ -139,7 +141,10 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         'item': buildMenuItem(
           text: 'Cadastro',
           iconSvg: 'assets/svgIcons/user-round.svg',
-          onClicked: () => context.go("/cadastro"),
+          onClicked: () {
+            Navigator.of(context).pop();
+            context.push("/cadastro");
+          },
           isParent: false,
         ),
       },
@@ -148,7 +153,10 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         'item': buildMenuItem(
           text: 'Eventos',
           iconSvg: 'assets/svgIcons/lucide--calendar-days.svg',
-          onClicked: () => context.go("/eventos"),
+          onClicked: () {
+            Navigator.of(context).pop();
+            context.push("/eventos");
+          },
           isParent: false,
         ),
       },
@@ -380,32 +388,11 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
 
   // Sair do App
   void sairApp(BuildContext context) async {
-    context.go("/");
-    // try {
-    // Limpa dados do usuário armazenas no shared preferences
-    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   prefs.clear();
-
-    //   // Limpa o token de mensagens do Firebase
-    //   await FirebaseMessaging.instance.deleteToken();
-
-    //   // fechar o banco de dados
-    //   DatabaseHelper databaseHelper = Modular.get<DatabaseHelper>();
-    //   databaseHelper.closeDatabase();
-
-    //   /// Limpa campos de login
-    //   loginController.textFieldLoginCpfController.text = "";
-    //   loginController.textFieldLoginSenhaController.text = "";
-
-    //   widget.imageFile = null;
-
-    //   /// Limpa dados do servidor controller
-    //   servidorController.limparDados();
-
-    //   // Modular.to.navigate('/');
-    // } finally {
-    //   Modular.to.navigate('/');
-    //   debugPrint("Sair do App - 2");
-    // }
+    try {
+      context.go("/");
+      await _sessionManager.logout();
+    } catch (e) {
+      debugPrint("Erro ao sair do app: $e");
+    }
   }
 }

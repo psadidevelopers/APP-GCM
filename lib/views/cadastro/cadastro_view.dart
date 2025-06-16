@@ -8,17 +8,20 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
 import 'package:intl/intl.dart';
+
 class Disponibilidade {
   final int? idEventovoluntario;
   final int? idEvento;
   final String data;
   final String? evento;
+  final String? leuNotificacaoEvento;
 
   Disponibilidade({
     required this.data,
     this.idEventovoluntario,
     this.idEvento,
     this.evento,
+    this.leuNotificacaoEvento,
   });
 
   factory Disponibilidade.fromApi(Map<String, dynamic> json) {
@@ -27,6 +30,7 @@ class Disponibilidade {
       idEvento: json['id_evento'],
       idEventovoluntario: json['id_eventovoluntario'],
       evento: json['evento'],
+      leuNotificacaoEvento: json['ind_leu_notificacao'],
     );
   }
 }
@@ -69,7 +73,7 @@ class CadastroData {
       graduacao: json['graduacao'] ?? '',
       categoriaCnh: json['categoria_cnh'] ?? '',
       email: json['email'] ?? '',
-      turnoTrabalho: '',
+      turnoTrabalho: json["turno_trabalho"] ?? '',
       telefoneCelular: telefone,
       disponibilidades: disponibilidadeList,
     );
@@ -132,7 +136,7 @@ class _CadastroViewState extends State<CadastroView> {
         _categoriaCnhController.text = data.categoriaCnh;
         _emailController.text = data.email;
         _telefoneCelularController.text = data.telefoneCelular;
-        // TODO: Incluir turnoTrabalho depois que att API -> _turnoTrabalhoController
+        _turnoTrabalhoController.text = data.turnoTrabalho;
 
         _isLoading = false;
       });
@@ -195,6 +199,7 @@ class _CadastroViewState extends State<CadastroView> {
         "ddd_telefone_celular": ddd,
         "num_telefone_celular": numero,
         "categoria_cnh": _categoriaCnhController.text,
+        "dsc_turno": _turnoTrabalhoController.text,
         "disponibilidades":
             _cadastroData?.disponibilidades
                 .map(
@@ -202,6 +207,7 @@ class _CadastroViewState extends State<CadastroView> {
                     "cod_funcionario": int.tryParse(codFuncionario) ?? 0,
                     "data": formatToIso(d.data),
                     "id_evento": d.idEvento ?? 0,
+                    "ind_leu_notificacao": d.leuNotificacaoEvento ?? 'N',
                   },
                 )
                 .toList() ??

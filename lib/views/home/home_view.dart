@@ -37,7 +37,21 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // final SessionManager _sessionManager = SessionManager();
+  final SessionManager _sessionManager = SessionManager();
+  String _dscNomeFuncionario = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDscNomeFuncionario();
+  }
+
+  Future<void> _fetchDscNomeFuncionario() async {
+    final nome = await _sessionManager.getDscNomeFuncionario();
+    setState(() {
+      _dscNomeFuncionario = nome?.split(" ")[0] ?? "";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +60,13 @@ class _HomeViewState extends State<HomeView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: Estilos.appBarHome(context, "PEGAR NOME DA API", scaffoldKey, ffem, ""),
+          appBar: Estilos.appBarHome(
+            context,
+            _dscNomeFuncionario,
+            scaffoldKey,
+            ffem,
+            "",
+          ),
           key: scaffoldKey,
           drawer: NavigationDrawerWidget(),
           backgroundColor: Estilos.branco,
@@ -84,7 +104,7 @@ class _HomeViewState extends State<HomeView> {
                                   0.0, // Espaçamento direito entre itens (opcional)
                             ),
                             child: BtnPadraoSquare(
-                              onTap: () => context.go(menus[index].link),
+                              onTap: () => context.push(menus[index].link),
                               icon: menus[index].iconSvg,
                               textBtn: menus[index].text,
                             ),

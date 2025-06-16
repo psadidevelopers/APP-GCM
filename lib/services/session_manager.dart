@@ -8,6 +8,7 @@ class SessionManager {
   static const _keyToken = 'auth_token';
   static const _keyExpiration = 'auth_expiration';
   static const _keyCodFuncionario = 'auth_cod_funcionario';
+  static const _keyDscNomeFuncionario = 'auth_dsc_nome_funcionario';
 
   Future<void> saveSession(LoginResponse response) async {
     await _storage.write(key: _keyToken, value: response.token);
@@ -15,6 +16,10 @@ class SessionManager {
     await _storage.write(
       key: _keyCodFuncionario,
       value: response.codFuncionario,
+    );
+    await _storage.write(
+      key: _keyDscNomeFuncionario,
+      value: response.dscNomeFuncionario,
     );
   }
 
@@ -28,6 +33,10 @@ class SessionManager {
 
   Future<String?> getCodFuncionario() async {
     return await _storage.read(key: _keyCodFuncionario);
+  }
+
+  Future<String?> getDscNomeFuncionario() async {
+    return await _storage.read(key: _keyDscNomeFuncionario);
   }
 
   Future<bool> isSessionValid() async {
@@ -57,5 +66,9 @@ class SessionManager {
       await clearSession();
       return false;
     }
+  }
+
+  Future<void> logout() async {
+    await clearSession();
   }
 }

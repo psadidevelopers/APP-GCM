@@ -1,5 +1,6 @@
 import 'package:app_gcm_sa/views/splash_screen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_gcm_sa/views/login/login_view.dart';
@@ -37,7 +38,7 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the routes where pressing back should exit the app.
-    const rootRoutes = ['/home', '/'];
+    const rootRoutes = ['/home', '/login'];
 
     return PopScope(
       canPop: false,
@@ -55,6 +56,10 @@ class AppShell extends StatelessWidget {
         } else if (rootRoutes.contains(currentLocation)) {
           // If we are on a root route and cannot pop, the OS will handle the exit.
           // This part is for added safety, but the logic above usually covers it.
+          SystemNavigator.pop();
+        } else {
+          // If we are not on a root route, navigate back to the home page.
+          router.go('/home');
         }
       },
       child: child,
