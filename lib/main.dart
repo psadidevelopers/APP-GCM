@@ -21,16 +21,6 @@ Future<void> main() async {
 
   runApp(MyApp());
 }
-
-class FodaseView extends StatelessWidget {
-  const FodaseView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Fodase"));
-  }
-}
-
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.child});
   final Widget child;
@@ -96,11 +86,6 @@ final _router = GoRouter(
           path: '/eventos',
           name: 'eventos',
           builder: (context, state) => EventosView(),
-        ),
-        GoRoute(
-          path: '/fodase',
-          name: 'fodase',
-          builder: (context, state) => const FodaseView(),
         ),
       ],
     ),

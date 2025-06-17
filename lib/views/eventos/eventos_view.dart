@@ -57,43 +57,32 @@ class _EventosViewState extends State<EventosView> {
   final SessionManager _sessionManager = SessionManager();
 
   @override
-  void dispose() {
-    // Chama a função de sincronização sem esperar (fire-and-forget)
-    _sincronizarNotificacoesLidas();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     _fetchEventos();
   }
 
-  Future<void> _sincronizarNotificacoesLidas() async {
-    List<Event> eventosRecemLidos =
-        events
-            .where(
-              (event) =>
-                  event.leuNotificacaoEvento == 'S' && event.idEvento > 0,
-            )
-            .toList();
-
-    if (eventosRecemLidos.isEmpty) {
-      return;
-    }
+  Future<void> _sincronizarNotificacaoLida(Event evento) async {
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final token = await _sessionManager.getToken();
       if (token == null) return; // Não pode sincronizar sem token
 
       await _eventosService.marcarNotificacoesComoLidas(
-        eventosRecemLidos,
+        [evento],
         token,
       );
     } catch (e) {
       debugPrint(
         'Erro ao sincronizar notificações lidas: ${e.toString()}',
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -154,12 +143,12 @@ class _EventosViewState extends State<EventosView> {
                 _buildDetailRow(
                   Icons.directions_car,
                   'Viatura Permitida',
-                  event.viaturaPermitida == 'S' ? 'Sim' : 'Não',
+                  event.viaturaPermitida.substring(0, event.viaturaPermitida.length - 2)
                 ),
                 _buildDetailRow(
                   Icons.shield,
                   'Arma Habilitada',
-                  event.armaHabilitada == 'S' ? 'Sim' : 'Não',
+                  event.armaHabilitada.substring(0, event.armaHabilitada.length - 2),
                 ),
               ],
             ),
@@ -251,13 +240,14 @@ class _EventosViewState extends State<EventosView> {
                                 ),
                               ),
                               subtitle: Text(event.data),
-                              onTap: () {
+                              onTap: () async {
                                 // Marca o evento como lido e exibe o modal
                                 if (event.leuNotificacaoEvento == 'N' &&
                                     event.idEvento > 0) {
                                   setState(() {
                                     event.leuNotificacaoEvento = 'S';
                                   });
+                                  await _sincronizarNotificacaoLida(event);
                                 }
                                 if (event.idEvento > 0) {
                                   _exibirDetalhesDoEvento(event);

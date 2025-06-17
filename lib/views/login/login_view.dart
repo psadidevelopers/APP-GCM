@@ -209,22 +209,6 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                       ),
-
-                      TextButton(
-                        onPressed: () {
-                          context.go('/fodase');
-                        },
-                        child: Text(
-                          'Esqueci minha senha',
-                          style: Utils.safeGoogleFont(
-                            color: const Color(0xFF7C7A80),
-                            fontSize: 14,
-                            'Roboto',
-                            fontWeight: FontWeight.w400,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
                       Text(
                         environment,
                         style: Utils.safeGoogleFont(
