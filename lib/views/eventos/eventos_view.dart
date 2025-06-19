@@ -7,37 +7,51 @@ import 'package:flutter/material.dart';
 class Event {
   final int idEventovoluntario;
   final int idEvento;
-  final String titulo;
   final String data;
-  final String nomeGuerra;
-  final String categoriaCnh;
-  final String viaturaPermitida;
-  final String armaHabilitada;
+  final String titulo;
   String leuNotificacaoEvento;
+
+  final String ordemDeServico;
+  final String rua;
+  final String numero;
+  final String bairro;
+  final String cidade;
+  final String horaInicio;
+  final String horaFinal;
+  final String inspetoria;
 
   Event({
     required this.idEventovoluntario,
     required this.idEvento,
-    required this.titulo,
     required this.data,
-    required this.nomeGuerra,
-    required this.categoriaCnh,
-    required this.viaturaPermitida,
-    required this.armaHabilitada,
+    required this.titulo,
     required this.leuNotificacaoEvento,
+    required this.ordemDeServico,
+    required this.rua,
+    required this.numero,
+    required this.bairro,
+    required this.cidade,
+    required this.horaInicio,
+    required this.horaFinal,
+    required this.inspetoria,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       idEventovoluntario: json['id_eventovoluntario'] ?? 0,
       idEvento: json['id_evento'] ?? 0,
-      titulo: json['dsc_titulo'] ?? 'Nenhum evento cadastrado aqui ainda!',
-      data: json['data'],
-      nomeGuerra: json['dsc_nome_guerra'] ?? 'N/A',
-      categoriaCnh: json['dsc_categoria_cnh'] ?? 'N/A',
-      viaturaPermitida: json['ind_viatura_permitida'] ?? 'N',
-      armaHabilitada: json['ind_arma_habilitada'] ?? 'N',
+      data: json['data'] ?? '',
+      titulo: json['dsc_titulo'] ?? 'Evento sem título',
       leuNotificacaoEvento: json['ind_leu_notificacao'] ?? 'N',
+
+      ordemDeServico: json['dsc_ordem_servico'] ?? 'Não informada',
+      rua: json['dsc_rua'] ?? 'Não informada',
+      numero: json['dsc_numero'] ?? 'S/N',
+      bairro: json['dsc_bairro'] ?? 'Não informado',
+      cidade: json['dsc_cidade'] ?? 'Não informada',
+      horaInicio: json['hor_inicio'] ?? '--:--',
+      horaFinal: json['hor_final'] ?? '--:--',
+      inspetoria: json['dsc_inspetoria'] ?? 'Não informada',
     );
   }
 }
@@ -71,14 +85,9 @@ class _EventosViewState extends State<EventosView> {
       final token = await _sessionManager.getToken();
       if (token == null) return; // Não pode sincronizar sem token
 
-      await _eventosService.marcarNotificacoesComoLidas(
-        [evento],
-        token,
-      );
+      await _eventosService.marcarNotificacoesComoLidas([evento], token);
     } catch (e) {
-      debugPrint(
-        'Erro ao sincronizar notificações lidas: ${e.toString()}',
-      );
+      debugPrint('Erro ao sincronizar notificações lidas: ${e.toString()}');
     } finally {
       setState(() {
         _isLoading = false;
@@ -128,27 +137,31 @@ class _EventosViewState extends State<EventosView> {
           ),
           title: Text(
             event.titulo,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                _buildDetailRow(
+                  Icons.article_outlined,
+                  'Ordem de Serviço',
+                  event.ordemDeServico,
+                ),
                 _buildDetailRow(Icons.calendar_today, 'Data', event.data),
                 _buildDetailRow(
-                  Icons.person,
-                  'Nome de Guerra',
-                  event.nomeGuerra,
-                ),
-                _buildDetailRow(Icons.credit_card, 'CNH', event.categoriaCnh),
-                _buildDetailRow(
-                  Icons.directions_car,
-                  'Viatura Permitida',
-                  event.viaturaPermitida.substring(0, event.viaturaPermitida.length - 2)
+                  Icons.schedule,
+                  'Horário',
+                  '${event.horaInicio} às ${event.horaFinal}',
                 ),
                 _buildDetailRow(
-                  Icons.shield,
-                  'Arma Habilitada',
-                  event.armaHabilitada.substring(0, event.armaHabilitada.length - 2),
+                  Icons.location_on,
+                  'Endereço',
+                  '${event.rua}, ${event.numero} - ${event.bairro}, ${event.cidade}',
+                ),
+                _buildDetailRow(
+                  Icons.corporate_fare,
+                  'Inspetoria',
+                  event.inspetoria,
                 ),
               ],
             ),
@@ -172,7 +185,6 @@ class _EventosViewState extends State<EventosView> {
     );
   }
 
-  // Widget auxiliar para criar as linhas de detalhe do modal
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -221,7 +233,8 @@ class _EventosViewState extends State<EventosView> {
                           final event = events[index];
                           return Card(
                             color:
-                                event.leuNotificacaoEvento == 'S' && event.idEvento > 0
+                                event.leuNotificacaoEvento == 'S' &&
+                                        event.idEvento > 0
                                     ? Colors.white
                                     : Colors.red.shade100,
                             elevation: 3,
