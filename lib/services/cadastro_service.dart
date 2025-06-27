@@ -54,4 +54,28 @@ class CadastroService {
       );
     }
   }
+
+  Future<List<dynamic>> getClasses(String token) async {
+    final url = Uri.parse('$_baseUrl/listar-classes');
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return data;
+    } else {
+      throw Exception('Falha ao carregar as classes.');
+    }
+  }
+
+  Future<List<dynamic>> getTurnos(String token) async {
+    final url = Uri.parse('$_baseUrl/listar-turnos');
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return data;
+    } else {
+      throw Exception('Falha ao carregar os turnos.');
+    }
+  }
 }

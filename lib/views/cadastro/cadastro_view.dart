@@ -2,12 +2,41 @@ import 'package:app_gcm_sa/components/snackbar_widget.dart';
 import 'package:app_gcm_sa/services/cadastro_service.dart';
 import 'package:app_gcm_sa/services/session_manager.dart';
 import 'package:app_gcm_sa/utils/estilos.dart';
+import 'package:app_gcm_sa/utils/string_para_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:app_gcm_sa/components/card_nav_drawer_widget.dart';
 import 'package:app_gcm_sa/utils/utils.dart';
 import 'package:intl/intl.dart';
+
+class Classe {
+  final int codClasse;
+  final String dscClasse;
+
+  Classe({required this.codClasse, required this.dscClasse});
+
+  factory Classe.fromApi(Map<String, dynamic> json) {
+    return Classe(
+      codClasse: json['cod_classe'] ?? 0,
+      dscClasse: json['dsc_classe'] ?? 'N/A',
+    );
+  }
+}
+
+class Turno {
+  final int codTurno;
+  final String dscTurno;
+
+  Turno({required this.codTurno, required this.dscTurno});
+
+  factory Turno.fromApi(Map<String, dynamic> json) {
+    return Turno(
+      codTurno: json['cod_turno'] ?? 0,
+      dscTurno: json['dsc_turno'] ?? 'N/A',
+    );
+  }
+}
 
 class Disponibilidade {
   final int? idEventovoluntario;
@@ -39,10 +68,12 @@ class CadastroData {
   String identificacaoFuncional;
   String nomeCompleto;
   String nomeGuerra;
-  String graduacao;
+  int? codClasse;
+  String? graduacao;
   String categoriaCnh;
   String email;
-  String turnoTrabalho;
+  int? codTurno;
+  String? turnoTrabalho;
   String telefoneCelular;
   List<Disponibilidade> disponibilidades;
 
@@ -50,10 +81,12 @@ class CadastroData {
     required this.identificacaoFuncional,
     required this.nomeCompleto,
     required this.nomeGuerra,
-    required this.graduacao,
+    this.codClasse,
+    this.graduacao,
     required this.categoriaCnh,
     required this.email,
-    required this.turnoTrabalho,
+    this.codTurno,
+    this.turnoTrabalho,
     required this.telefoneCelular,
     required this.disponibilidades,
   });
@@ -70,10 +103,12 @@ class CadastroData {
       identificacaoFuncional: json['identificacao_funcional'] ?? '',
       nomeCompleto: json['nome_completo'] ?? '',
       nomeGuerra: json['nome_guerra'] ?? '',
-      graduacao: json['graduacao'] ?? '',
+      codClasse: json['cod_classe'],
+      graduacao: json['graduacao'],
       categoriaCnh: json['categoria_cnh'] ?? '',
       email: json['email'] ?? '',
-      turnoTrabalho: json["turno_trabalho"] ?? '',
+      codTurno: json['cod_turno'],
+      turnoTrabalho: json["turno_trabalho"],
       telefoneCelular: telefone,
       disponibilidades: disponibilidadeList,
     );
@@ -91,6 +126,10 @@ class _CadastroViewState extends State<CadastroView> {
   final _formKey = GlobalKey<FormState>();
 
   CadastroData? _cadastroData;
+  List<Classe> _opcoesClasses = [];
+  List<Turno> _opcoesTurnos = [];
+  Classe? _classeSelecionada;
+  Turno? _turnoSelecionado;
   bool _isLoading = true;
   bool _isSaving = false; // Loading exclusivo do botão Salvar
 
@@ -100,10 +139,8 @@ class _CadastroViewState extends State<CadastroView> {
   final _identificacaoFuncionalController = TextEditingController();
   final _nomeCompletoController = TextEditingController();
   final _nomeGuerraController = TextEditingController();
-  final _graduacaoController = TextEditingController();
   final _categoriaCnhController = TextEditingController();
   final _emailController = TextEditingController();
-  final _turnoTrabalhoController = TextEditingController();
   final _telefoneCelularController = TextEditingController();
   final _disponibilidadeController = TextEditingController();
 
@@ -123,8 +160,31 @@ class _CadastroViewState extends State<CadastroView> {
       }
 
       final apiData = await _cadastroService.getCadastro(codFuncionario, token);
-
       final data = CadastroData.fromApi(apiData);
+
+      final classes = await _cadastroService.getClasses(token);
+      _opcoesClasses =
+          classes.map<Classe>((c) {
+            Classe classe = Classe.fromApi(c);
+
+            if (c['cod_classe'] == data.codClasse) {
+              _classeSelecionada = classe;
+            }
+
+            return classe;
+          }).toList();
+
+      final turnos = await _cadastroService.getTurnos(token);
+      _opcoesTurnos =
+          turnos.map<Turno>((c) {
+            Turno turno = Turno.fromApi(c);
+
+            if (c['cod_turno'] == data.codTurno) {
+              _turnoSelecionado = turno;
+            }
+
+            return turno;
+          }).toList();
 
       setState(() {
         _cadastroData = data;
@@ -132,11 +192,9 @@ class _CadastroViewState extends State<CadastroView> {
         _identificacaoFuncionalController.text = data.identificacaoFuncional;
         _nomeCompletoController.text = data.nomeCompleto;
         _nomeGuerraController.text = data.nomeGuerra;
-        _graduacaoController.text = data.graduacao;
         _categoriaCnhController.text = data.categoriaCnh;
         _emailController.text = data.email;
         _telefoneCelularController.text = data.telefoneCelular;
-        _turnoTrabalhoController.text = data.turnoTrabalho;
 
         _isLoading = false;
       });
@@ -195,11 +253,12 @@ class _CadastroViewState extends State<CadastroView> {
         "cod_funcionario": int.tryParse(codFuncionario) ?? 0,
         "nome_completo": _nomeCompletoController.text,
         "nome_guerra": _nomeGuerraController.text,
+        "cod_classe": _classeSelecionada?.codClasse,
         "email": _emailController.text,
         "ddd_telefone_celular": ddd,
         "num_telefone_celular": numero,
         "categoria_cnh": _categoriaCnhController.text,
-        "dsc_turno": _turnoTrabalhoController.text,
+        "cod_turno": _turnoSelecionado?.codTurno,
         "disponibilidades":
             _cadastroData?.disponibilidades
                 .map(
@@ -241,10 +300,8 @@ class _CadastroViewState extends State<CadastroView> {
     _identificacaoFuncionalController.dispose();
     _nomeCompletoController.dispose();
     _nomeGuerraController.dispose();
-    _graduacaoController.dispose();
     _categoriaCnhController.dispose();
     _emailController.dispose();
-    _turnoTrabalhoController.dispose();
     _telefoneCelularController.dispose();
     _disponibilidadeController.dispose();
     super.dispose();
@@ -382,25 +439,36 @@ class _CadastroViewState extends State<CadastroView> {
                             ),
                             const SizedBox(height: 16),
 
-                            TextFormField(
-                              controller: _graduacaoController,
+                            DropdownButtonFormField<Classe>(
+                              value: _classeSelecionada,
+                              isExpanded: true,
                               decoration: const InputDecoration(
                                 labelText: 'Graduação',
                                 border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Estilos.cinzaClaro,
-                                  ),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
                                 ),
                               ),
-                              style: Utils.safeGoogleFont(
-                                'Roboto',
-                                fontWeight: FontWeight.w400,
-                                color: Estilos.preto,
-                              ),
+                              items:
+                                  _opcoesClasses.map((Classe classe) {
+                                    return DropdownMenuItem<Classe>(
+                                      value: classe,
+                                      child: Text(classe.dscClasse),
+                                    );
+                                  }).toList(),
+                              onChanged: (Classe? newValue) {
+                                setState(() {
+                                  _classeSelecionada = newValue;
+                                });
+                              },
+                              validator:
+                                  (value) =>
+                                      value == null
+                                          ? 'Selecione a graduação'
+                                          : null,
                             ),
+
                             const SizedBox(height: 16),
 
                             TextFormField(
@@ -446,25 +514,36 @@ class _CadastroViewState extends State<CadastroView> {
                             ),
                             const SizedBox(height: 16),
 
-                            TextFormField(
-                              controller: _turnoTrabalhoController,
+                            DropdownButtonFormField<Turno>(
+                              value: _turnoSelecionado,
+                              isExpanded: true,
                               decoration: const InputDecoration(
                                 labelText: 'Turno atual de trabalho',
                                 border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Estilos.cinzaClaro,
-                                  ),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
                                 ),
                               ),
-                              style: Utils.safeGoogleFont(
-                                'Roboto',
-                                fontWeight: FontWeight.w400,
-                                color: Estilos.preto,
-                              ),
+                              items:
+                                  _opcoesTurnos.map((Turno turno) {
+                                    return DropdownMenuItem<Turno>(
+                                      value: turno,
+                                      child: Text(turno.dscTurno),
+                                    );
+                                  }).toList(),
+                              onChanged: (Turno? newValue) {
+                                setState(() {
+                                  _turnoSelecionado = newValue;
+                                });
+                              },
+                              validator:
+                                  (value) =>
+                                      value == null
+                                          ? 'Selecione um turno'
+                                          : null,
                             ),
+
                             const SizedBox(height: 16),
 
                             TextFormField(
@@ -627,6 +706,18 @@ class _CadastroViewState extends State<CadastroView> {
                                       _cadastroData!.disponibilidades.add(
                                         Disponibilidade(data: novaData),
                                       );
+                                      _cadastroData!.disponibilidades.sort((
+                                        a,
+                                        b,
+                                      ) {
+                                        final DateTime dataA = stringParaData(
+                                          a.data,
+                                        );
+                                        final DateTime dataB = stringParaData(
+                                          b.data,
+                                        );
+                                        return dataA.compareTo(dataB);
+                                      });
                                       _disponibilidadeController.clear();
                                     });
                                   },
