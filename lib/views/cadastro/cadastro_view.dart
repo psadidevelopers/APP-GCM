@@ -130,6 +130,8 @@ class _CadastroViewState extends State<CadastroView> {
   List<Turno> _opcoesTurnos = [];
   Classe? _classeSelecionada;
   Turno? _turnoSelecionado;
+  final Set<String> _categoriasCnhSelecionadas = <String>{};
+  static const categoriasValidas = {'A', 'B', 'C', 'D', 'E'};
   bool _isLoading = true;
   bool _isSaving = false; // Loading exclusivo do botão Salvar
 
@@ -139,7 +141,6 @@ class _CadastroViewState extends State<CadastroView> {
   final _identificacaoFuncionalController = TextEditingController();
   final _nomeCompletoController = TextEditingController();
   final _nomeGuerraController = TextEditingController();
-  final _categoriaCnhController = TextEditingController();
   final _emailController = TextEditingController();
   final _telefoneCelularController = TextEditingController();
   final _disponibilidadeController = TextEditingController();
@@ -192,9 +193,17 @@ class _CadastroViewState extends State<CadastroView> {
         _identificacaoFuncionalController.text = data.identificacaoFuncional;
         _nomeCompletoController.text = data.nomeCompleto;
         _nomeGuerraController.text = data.nomeGuerra;
-        _categoriaCnhController.text = data.categoriaCnh;
         _emailController.text = data.email;
         _telefoneCelularController.text = data.telefoneCelular;
+
+        _categoriasCnhSelecionadas.clear();
+        if (data.categoriaCnh.isNotEmpty) {
+          _categoriasCnhSelecionadas.addAll(
+            data.categoriaCnh
+                .split('')
+                .where((cat) => categoriasValidas.contains(cat)),
+          );
+        }
 
         _isLoading = false;
       });
@@ -248,6 +257,9 @@ class _CadastroViewState extends State<CadastroView> {
         ).toIso8601String();
       }
 
+      final List<String> categoriasList = _categoriasCnhSelecionadas.toList();
+      categoriasList.sort();
+
       // Criando o mapa do payload
       final Map<String, dynamic> payload = {
         "cod_funcionario": int.tryParse(codFuncionario) ?? 0,
@@ -257,7 +269,7 @@ class _CadastroViewState extends State<CadastroView> {
         "email": _emailController.text,
         "ddd_telefone_celular": ddd,
         "num_telefone_celular": numero,
-        "categoria_cnh": _categoriaCnhController.text,
+        "categoria_cnh": categoriasList.join(''),
         "cod_turno": _turnoSelecionado?.codTurno,
         "disponibilidades":
             _cadastroData?.disponibilidades
@@ -295,12 +307,51 @@ class _CadastroViewState extends State<CadastroView> {
     }
   }
 
+  Widget _buildCnhCheckbox(String categoria) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(categoria),
+        Checkbox(
+          value: _categoriasCnhSelecionadas.contains(categoria),
+          onChanged: (bool? isChecked) {
+            final novoSet = Set<String>.from(_categoriasCnhSelecionadas);
+            if (isChecked == true) {
+              novoSet.add(categoria);
+            } else {
+              novoSet.remove(categoria);
+            }
+
+            // APLICA A REGRA DE VALIDAÇÃO
+            // 1. Não pode ter mais de 2 categorias
+            // 2. Se tiver 2, uma delas OBRIGATORIAMENTE tem que ser a 'A'
+            if (novoSet.length > 2 ||
+                (novoSet.length == 2 && !novoSet.contains('A'))) {
+              // Se a regra for violada, mostra um erro e não atualiza o estado
+              showCustomSnackbar(
+                context,
+                message: 'Apenas "A" pode ser combinada com outra categoria.',
+                backgroundColor: Estilos.danger,
+              );
+              return; // Impede a atualização do estado
+            }
+
+            // Se a validação passar, atualiza o estado
+            setState(() {
+              _categoriasCnhSelecionadas.clear();
+              _categoriasCnhSelecionadas.addAll(novoSet);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   void dispose() {
     _identificacaoFuncionalController.dispose();
     _nomeCompletoController.dispose();
     _nomeGuerraController.dispose();
-    _categoriaCnhController.dispose();
     _emailController.dispose();
     _telefoneCelularController.dispose();
     _disponibilidadeController.dispose();
@@ -471,25 +522,43 @@ class _CadastroViewState extends State<CadastroView> {
 
                             const SizedBox(height: 16),
 
-                            TextFormField(
-                              controller: _categoriaCnhController,
-                              decoration: const InputDecoration(
-                                labelText: 'Categoria CNH',
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Estilos.cinzaClaro,
-                                  ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Categoria CNH:',
+                                  style: Utils.safeGoogleFont(
+                                    'Roboto',
+                                    color: Colors.black54,
                                   ),
                                 ),
-                              ),
-                              style: Utils.safeGoogleFont(
-                                'Roboto',
-                                fontWeight: FontWeight.w400,
-                                color: Estilos.preto,
-                              ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                    horizontal: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Estilos.cinzaClaro,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _buildCnhCheckbox('A'),
+                                      _buildCnhCheckbox('B'),
+                                      _buildCnhCheckbox('C'),
+                                      _buildCnhCheckbox('D'),
+                                      _buildCnhCheckbox('E'),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
+
                             const SizedBox(height: 16),
 
                             TextFormField(
