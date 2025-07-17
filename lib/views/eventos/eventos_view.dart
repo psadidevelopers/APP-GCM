@@ -226,7 +226,7 @@ class _EventosViewState extends State<EventosView> {
                           color: Estilos.azulClaro,
                         ),
                       )
-                      : events.length > 0 ? ListView.builder(
+                      : events.isNotEmpty ? ListView.builder(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         itemCount: events.length,
                         itemBuilder: (context, index) {
