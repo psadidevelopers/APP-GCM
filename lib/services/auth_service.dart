@@ -8,17 +8,37 @@ class AuthService {
 
   Future<LoginResponse> login(String usuario, String senha) async {
     final url = Uri.parse('$_baseUrl/login');
+    const int maxRetries = 5;
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'usuario': usuario, 'senha': senha}),
-    );
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        final response = await http
+            .post(
+              url,
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({'usuario': usuario, 'senha': senha}),
+            )
+            .timeout(const Duration(seconds: 15));
 
-    if (response.statusCode == 200) {
-      return LoginResponse.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Falha no login');
+        if (response.statusCode == 200) {
+          return LoginResponse.fromJson(jsonDecode(response.body));
+        } else if (response.statusCode >= 400 && response.statusCode < 500) {
+          throw Exception('Usuário ou senha incorretos.');
+        } else {
+          throw Exception('Erro no servidor: ${response.statusCode}');
+        }
+      } catch (e) {
+        if (attempt < maxRetries) {
+          final delay = Duration(seconds: attempt);
+          await Future.delayed(delay);
+        } else {
+          throw Exception(
+            'Não foi possível conectar ao servidor. Verifique sua conexão e tente mais tarde.',
+          );
+        }
+      }
     }
+
+    throw Exception('Falha inesperada no processo de login.');
   }
 }

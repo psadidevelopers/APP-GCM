@@ -226,7 +226,7 @@ class _EventosViewState extends State<EventosView> {
                           color: Estilos.azulClaro,
                         ),
                       )
-                      : ListView.builder(
+                      : events.length > 0 ? ListView.builder(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         itemCount: events.length,
                         itemBuilder: (context, index) {
@@ -269,6 +269,8 @@ class _EventosViewState extends State<EventosView> {
                             ),
                           );
                         },
+                      ) : const Center(
+                        child: Text('Nenhum evento encontrado'),
                       ),
             ),
           ),
